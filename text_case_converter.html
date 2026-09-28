@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Case Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+    }
+    textarea {
+      width: 1000px;
+      height: 600px;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+    <div class="container">
+    <textarea id="textInput" placeholder="Paste or type your text here..."></textarea>
+    <div class="buttons">
+      <button id="btn1" onclick="applyCase(toTitleCase)">Title Case  (Alt+1)</button>
+      <button id="btn2" onclick="applyCase(toSentenceCase)">Sentence case (Alt+2)</button>
+      <button id="btn3" onclick="applyCase(toLowerCaseText)">lower case (Alt+3)</button>
+      <button id="btn4" onclick="applyCase(toUpperCaseText)">UPPER CASE (Alt+4)</button>
+      <button id="btn5" onclick="applyCase(toCapitaliseCase)">Capitalise Case (Alt+5)</button>
+    </div>
+  </div>
+
+  <script>
+    const textArea = document.getElementById("textInput");
+
+    function applyCase(caseFunction) {
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      let text = textArea.value;
+
+      if (start !== end) {
+        // Apply only to selected text
+        const before = text.slice(0, start);
+        const selection = text.slice(start, end);
+        const after = text.slice(end);
+        const transformed = caseFunction(selection);
+        textArea.value = before + transformed + after;
+        textArea.setSelectionRange(start, start + transformed.length);
+      } else {
+        // Apply to whole text
+        textArea.value = caseFunction(text);
+      }
+    }
+
+    function toSentenceCase(str) {
+      let text = str.toLowerCase();
+      return text.replace(/(^\s*\w|[.!?]\s*\w)/g, c => c.toUpperCase());
+    }
+
+    function toLowerCaseText(str) {
+      return str.toLowerCase();
+    }
+
+    function toUpperCaseText(str) {
+      return str.toUpperCase();
+    }
+
+    function toCapitaliseCase(str) {
+      return str.replace(/\b\w+/g, word => {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      });
+    }
+
+    function toTitleCase(str) {
+      const minorWords = ["and", "or", "but", "a", "an", "the", "for", "nor", "on", "at", "to", "from", "by", "of", "in"];
+      return str.toLowerCase().replace(/\b\w+/g, (word, index) => {
+        if (index === 0 || !minorWords.includes(word)) {
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        }
+        return word;
+      });
+    }
+
+    // Keyboard shortcuts Alt+1 to Alt+5
+    document.addEventListener("keydown", function(e) {
+      if (e.altKey) {
+        switch (e.key) {
+          case "1":
+            e.preventDefault();
+            document.getElementById("btn1").click();
+            break;
+          case "2":
+            e.preventDefault();
+            document.getElementById("btn2").click();
+            break;
+          case "3":
+            e.preventDefault();
+            document.getElementById("btn3").click();
+            break;
+          case "4":
+            e.preventDefault();
+            document.getElementById("btn4").click();
+            break;
+          case "5":
+            e.preventDefault();
+            document.getElementById("btn5").click();
+            break;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
